@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html html="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Kunjo! 🩵</title>
+    <style>
+        :root {
+            --primary-color: #ff6b81;
+            --accent-color: #00ebc7;
+            --bg-color: #fff0f3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Floating Background Elements */
+        .floating-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-item {
+            position: absolute;
+            font-size: 24px;
+            animation: floatUp 8s linear infinite;
+            bottom: -50px;
+            opacity: 0.6;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% {
+                transform: translateY(-105vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Screen Wrapper Setup */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+            z-index: 10;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Generic Button Styling */
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 129, 0.4);
+            transition: transform 0.2s, background-color 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #ff4757;
+        }
+
+        /* Phase 1: Welcome Screen */
+        .square-pic-container {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 4px solid white;
+        }
+
+        .square-pic-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Phase 2: Gift Map Screen */
+        .header-text {
+            font-size: 22px;
+            color: #4a4a4a;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .cyan-heart {
+            color: var(--accent-color);
+            font-size: 24px;
+        }
+
+        .map-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            padding: 20px 0;
+        }
+
+        .gift-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        .gift-box {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border: 3px solid var(--primary-color);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, background-color 0.3s;
+            position: relative;
+        }
+
+        .gift-box.opened {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.1);
+        }
+
+        .heart-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 16px;
+        }
+
+        /* Connecting Path Lines */
+        .path-line {
+            width: 4px;
+            height: 30px;
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--primary-color),
+                var(--primary-color) 6px,
+                transparent 6px,
+                transparent 12px
+            );
+            z-index: 1;
+        }
+
+        /* Modals (Popups) for Gifts */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #eee;
+        }
+
+        .close-modal {
+            background: #eee;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        /* Special 5th Box Custom Styling */
+        .custom-message {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+            text-align: justify;
+            background: #fff5f6;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Emojis Container -->
+    <div class="floating-bg" id="floatingBg"></div>
+
+    <!-- PHASE 1: Welcome Screen -->
+    <div class="screen active" id="screen1">
+        <div class="square-pic-container">
+            <img src="https://i.postimg.cc/jqMKnNFD/IMG-20260415-WA0019-1.jpg" alt="Welcome Pic">
+        </div>
+        <button class="btn" onclick="goToPhase2()">ENTER</button>
+    </div>
+
+    <!-- PHASE 2: Gift Box Path Map -->
+    <div class="screen" id="screen2">
+        <div class="header-text">Open 1 to 5 <span class="cyan-heart">🩵</span></div>
+        
+        <div class="map-container">
+            <!-- Box 1 -->
+            <div class="gift-node" onclick="openGift(1)">
+                <div class="gift-box" id="box1">1 <span class="heart-badge">❤️</span></div>
+            </div>
+            <div class="path-line"></div>
+
+            <!-- Box 2 -->
+            <div class="gift-node" onclick="openGift(2)">
+                <div class="gift-box" id="box2">2 <span class="heart-badge">💖</span></div>
+            </div>
+            <div class="path-line"></div>
+
+            <!-- Box 3 -->
+            <div class="gift-node" onclick="openGift(3)">
+                <div class="gift-box" id="box3">3 <span class="heart-badge">💝</span></div>
+            </div>
+            <div class="path-line"></div>
+
+            <!-- Box 4 -->
+            <div class="gift-node" onclick="openGift(4)">
+                <div class="gift-box" id="box4">4 <span class="heart-badge">💘</span></div>
+            </div>
+            <div class="path-line"></div>
+
+            <!-- Box 5 -->
+            <div class="gift-node" onclick="openGift(5)">
+                <div class="gift-box" id="box5">5 <span class="heart-badge">🩵</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS FOR GIFTS 1 - 4 -->
+    <div class="modal" id="giftModal">
+        <div class="modal-content">
+            <h3 id="modalTitle" style="margin-bottom: 10px; color: var(--primary-color);">Gift Box</h3>
+            <img id="modalImg" src="" alt="Gift Image" class="modal-img">
+            <br>
+            <button class="close-modal" onclick="closeGiftModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- MODAL FOR GIFT 5 (Final Text & Redirect) -->
+    <div class="modal" id="giftModal5">
+        <div class="modal-content" style="max-width: 450px;">
+            <h3 style="margin-bottom: 10px; color: var(--primary-color);">Final Surprise 🩵</h3>
+            <img src="https://i.postimg.cc/nc7JR5L1/IMG-20260513-WA0013.jpg" alt="Final Pic" class="modal-img">
+            
+            <div class="custom-message">
+                Kunjo you are my favorite person ente life ente koode ennum ente koode ninne ente kunj ahn,ente kunj ine enik around ippo 6 year ariyarikum nammL collage padicha muthal dhe e date vare ennum ente life oru happiness ayi koode undarunnu ente kunj ahn am not done anything big thing in you life may be kanum but kunj ente life undakiya athre onn njan thanilla orapp ahn and one more year goes also one age koode ini life munnot und and ente kunj ennum eppolum e life long happy ayi jeevikanm and enne kond patunna athre njan happy akum,ente kunj koode njan undakum ittit pokula appo happy birthday ente ellam ellam aya kunji😘🫂🩵 - enn kunjinte ashu😘💋
+            </div>
+
+            <a href="https://wa.me/918281226041" class="btn whatsapp-btn">LEAVE TO NEXT</a>
+        </div>
+    </div>
+
+    <script>
+        // Data for Gifts 1-4
+        const giftImages = {
+            1: "https://i.postimg.cc/hj7yDk65/IMG-20251223-WA0009.jpg",
+            2: "https://i.postimg.cc/0y8BYHMB/IMG-20260218-WA0030.jpg",
+            3: "https://i.postimg.cc/JhYv4chg/IMG-20260328-WA0013.jpg",
+            4: "https://i.postimg.cc/76fvgtcz/IMG-20260415-WA0022.jpg"
+        };
+
+        // Generation of Floating Background Emojis
+        const items = ['🎂', '🧁', '🍰', '❤️', '💖', '💝', '💙', '💛', '💜', '✨'];
+        const bgContainer = document.getElementById('floatingBg');
+
+        function createFloatingItem() {
+            const item = document.createElement('div');
+            item.classList.add('floating-item');
+            item.innerText = items[Math.floor(Math.random() * items.length)];
+            item.style.left = Math.random() * 100 + 'vw';
+            item.style.animationDuration = (Math.random() * 4 + 5) + 's'; // 5 to 9 seconds
+            item.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            
+            bgContainer.appendChild(item);
+
+            // Clean up item after animation finishes
+            setTimeout(() => {
+                item.remove();
+            }, 9000);
+        }
+
+        // Keep generating floating elements
+        setInterval(createFloatingItem, 300);
+
+        // Phase Transition Logic
+        function goToPhase2() {
+            document.getElementById('screen1').classList.remove('active');
+            document.getElementById('screen2').classList.add('active');
+        }
+
+        // Open Gift Popups
+        function openGift(num) {
+            // Mark box as viewed/opened structurally
+            document.getElementById(`box${num}`).classList.add('opened');
+
+            if(num === 5) {
+                // Special Modal for Gift 5
+                document.getElementById('giftModal5').classList.add('active');
+            } else {
+                // Regular modal for Gifts 1-4
+                document.getElementById('modalTitle').innerText = `Gift Box ${num}`;
+                document.getElementById('modalImg').src = giftImages[num];
+                document.getElementById('giftModal').classList.add('active');
+            }
+        }
+
+        function closeGiftModal() {
+            document.getElementById('giftModal').classList.remove('active');
+        }
+    </script>
+</body>
+  </html>
